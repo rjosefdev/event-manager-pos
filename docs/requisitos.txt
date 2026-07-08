@@ -1,0 +1,28 @@
+1) Autenticação e perfis
+- Cadastro e login de usuários
+- Dois perfis:
+Organizador - cria e gerencia eventos
+Participante - se inscreve em eventos
+- O sistema deve impedir ações indevidas (ex: participante não pode editar evento de outro participante)
+- A UI deve ser diferente para cada perfil(uma UI pra organizador, uma UI para user)
+
+2) Gestão de eventos (CRUD)
+Um organizador pode:
+- Criar evento com: título, descrição, data/hora, local (ou online), categoria, número de vagas e opcionalmente uma imagem
+- Editar e excluir eventos enquanto ainda não ocorreram
+- Listar seus próprios eventos com status (futuro, ocorrendo e finalizado)
+
+3) Catalogo e busca
+Um participante pode:
+- Visualizar lista de eventos disponíveis
+- Filtrar a lista de eventos por categoria, Pesquisar por texto e Ordenar por data
+- Ver detalhes do evento
+
+4) Inscrição em eventos
+Um participante pode:
+- Inscrever-se em um evento (respeitando limite de vagas).
+- Cancelar a inscrição em um evento que ainda não ocorreu
+- Ver as inscrições que ele fez ("Minhas Inscrições")
+
+Um organizador pode:
+- Ver lista de inscritos por evento
