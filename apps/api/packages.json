@@ -1,0 +1,9 @@
+{
+    "name": "api",
+    "private": true,
+    "scripts": {
+        "dev": "./mvnw spring-boot:run",
+        "build": "./mvnw clean package -DskipTests",
+        "test": "./mvnw test"
+    }
+}
