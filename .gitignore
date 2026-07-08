@@ -20,6 +20,10 @@ target
 .vscode
 *.iml
 
+# Agent local config
+docs/agents/
+AGENTS.md
+
 # OS
 .DS_Store
 Thumbs.db
