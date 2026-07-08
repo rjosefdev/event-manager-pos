@@ -26,3 +26,36 @@ Um participante pode:
 
 Um organizador pode:
 - Ver lista de inscritos por evento
+
+----
+
+Ideia de para a API:
+
+src/main/java/com/rjosefdev/eventos_api
+├── auth
+│   ├── AuthController.java
+│   ├── AuthService.java
+│   ├── dto
+│   └── security
+├── users
+│   ├── User.java
+│   ├── UserRepository.java
+│   ├── UserService.java
+│   └── Role.java
+├── events
+│   ├── Event.java
+│   ├── EventController.java
+│   ├── EventService.java
+│   ├── EventRepository.java
+│   └── dto
+├── registrations
+│   ├── Registration.java
+│   ├── RegistrationController.java
+│   ├── RegistrationService.java
+│   ├── RegistrationRepository.java
+│   └── dto
+├── common
+│   ├── exception
+│   ├── response
+│   └── validation
+└── EventosApiApplication.java
