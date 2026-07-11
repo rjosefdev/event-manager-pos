@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Event Manager Web
 
-## Getting Started
+Front end em Next.js para o Event Manager. A aplicação permite cadastro/login, restaura sessão com o token salvo no navegador e apresenta áreas diferentes para participantes e organizadores.
 
-First, run the development server:
+## Pré-requisitos
+
+- Node.js compatível com Next.js 16
+- pnpm 11.x
+- API do Event Manager disponível localmente ou em uma URL acessível pelo navegador
+
+## Configuração
+
+A UI usa a variável pública `NEXT_PUBLIC_API_URL` para montar as chamadas HTTP. Quando ela não é definida, o valor padrão é:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+http://localhost:8080
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Exemplo de arquivo `.env.local`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Comandos
 
-## Learn More
+A partir da raiz do monorepo:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+pnpm --filter web dev
+pnpm --filter web build
+pnpm --filter web lint
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ou, para subir web e API juntos quando as dependências do monorepo estiverem instaladas:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+O servidor web roda em `http://localhost:3000`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Fluxos implementados
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Cadastro de participante em `/autenticacao/cadastro`.
+- Login em `/autenticacao/login`.
+- Restauração de sessão consultando `/usuarios/atual`.
+- Área do participante com catálogo, detalhes de eventos, criação, cancelamento e reativação de inscrições.
+- Área do organizador com criação, edição, cancelamento e listagem de inscritos dos próprios eventos.
+
+## Endpoints consumidos
+
+- `POST /autenticacao/cadastro`
+- `POST /autenticacao/login`
+- `GET /usuarios/atual`
+- `GET /catalogo/eventos`
+- `GET /catalogo/eventos/{eventoId}`
+- `GET /inscricoes`
+- `POST /inscricoes`
+- `DELETE /inscricoes/{inscricaoId}`
+- `PATCH /inscricoes/{inscricaoId}/reativar`
+- `GET /eventos`
+- `POST /eventos`
+- `PUT /eventos/{eventoId}`
+- `DELETE /eventos/{eventoId}`
+- `GET /eventos/{eventoId}/inscricoes`
+
+## Observações de arquitetura
+
+Hoje a maior parte do front end está concentrada em `src/app/page.tsx`: tipos da API, helpers, chamadas HTTP, estado de sessão e componentes das áreas autenticadas. Consulte `FRONTEND_REVIEW.md` para as tarefas sugeridas de desacoplamento, roteamento protegido e correção de documentação.
+
+A próxima evolução de roteamento deve usar `src/proxy.ts` para bloqueio inicial por cookie de `/participante` e `/organizador`, layouts em `src/app/(protected)` para validar sessão real e layouts específicos por role. Esse fluxo melhora a experiência e evita flash de conteúdo protegido, mas a autorização definitiva das ações continua no backend.
