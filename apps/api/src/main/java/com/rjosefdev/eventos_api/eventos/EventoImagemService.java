@@ -8,11 +8,14 @@ import java.util.Set;
 
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.mongodb.client.gridfs.model.GridFSFile;
 
 @Service
 public class EventoImagemService {
@@ -79,6 +82,27 @@ public class EventoImagemService {
 
         removerArquivoSeExistir(arquivoAntigoId);
         return EventoResponse.de(eventoSalvo, agora);
+    }
+
+    public ImagemPublica buscarImagemPublica(String eventoId) {
+        Evento evento = eventoRepository.findById(eventoId)
+            .orElseThrow(RecursoNaoEncontradoException::new);
+        if (!evento.possuiImagemArquivo()) {
+            throw new RecursoNaoEncontradoException();
+        }
+
+        GridFSFile arquivo = gridFsTemplate.findOne(
+            Query.query(Criteria.where("_id").is(valorIdGridFs(evento.getImagemArquivoId())))
+        );
+        if (arquivo == null) {
+            throw new RecursoNaoEncontradoException();
+        }
+
+        return new ImagemPublica(
+            gridFsTemplate.getResource(arquivo),
+            evento.getImagemContentType(),
+            evento.getImagemTamanhoBytes()
+        );
     }
 
     private Evento buscarEventoProprioEditavel(String organizadorId, String eventoId, Instant agora) {
@@ -148,6 +172,13 @@ public class EventoImagemService {
         String nome,
         String contentType,
         long tamanhoBytes
+    ) {
+    }
+
+    public record ImagemPublica(
+        Resource recurso,
+        String contentType,
+        Long tamanhoBytes
     ) {
     }
 }

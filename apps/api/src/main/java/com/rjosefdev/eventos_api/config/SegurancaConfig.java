@@ -58,6 +58,7 @@ public class SegurancaConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/autenticacao/cadastro").permitAll()
                 .requestMatchers(HttpMethod.POST, "/autenticacao/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/catalogo/eventos/*/imagem").permitAll()
                 .requestMatchers(
                     "/v3/api-docs",
                     "/v3/api-docs/**",

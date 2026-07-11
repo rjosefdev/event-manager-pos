@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -24,12 +25,13 @@ class TokenAcessoServiceTest {
 
     private static final String SEGREDO = "12345678901234567890123456789012";
     private static final String ISSUER = "event-manager-api";
+    private static final Instant EMITIDO_EM = Instant.now().minusSeconds(60).truncatedTo(ChronoUnit.SECONDS);
 
     private final SegurancaConfig segurancaConfig = new SegurancaConfig();
 
     @Test
     void geraJwtHs256ComClaimsAcordadosEExpiracaoDeUmaHora() {
-        Clock clock = Clock.fixed(Instant.parse("2026-07-11T15:00:00Z"), ZoneOffset.UTC);
+        Clock clock = Clock.fixed(EMITIDO_EM, ZoneOffset.UTC);
         TokenAcessoService service = new TokenAcessoService(
             segurancaConfig.jwtEncoder(SEGREDO),
             clock,
@@ -46,8 +48,8 @@ class TokenAcessoServiceTest {
         assertThat(jwt.getAudience()).containsExactly(TokenAcessoService.AUDIENCIA);
         assertThat(jwt.getSubject()).isEqualTo("usuario-1");
         assertThat(jwt.getClaimAsString("perfil")).isEqualTo("PARTICIPANTE");
-        assertThat(jwt.getIssuedAt()).isEqualTo(Instant.parse("2026-07-11T15:00:00Z"));
-        assertThat(jwt.getExpiresAt()).isEqualTo(Instant.parse("2026-07-11T16:00:00Z"));
+        assertThat(jwt.getIssuedAt()).isEqualTo(EMITIDO_EM);
+        assertThat(jwt.getExpiresAt()).isEqualTo(EMITIDO_EM.plusSeconds(3600));
         assertThat(token.expiraEm()).isEqualTo(jwt.getExpiresAt());
         assertThat(jwt.getClaims().keySet())
             .containsExactlyInAnyOrder("iss", "aud", "sub", "iat", "exp", "perfil");
@@ -55,8 +57,8 @@ class TokenAcessoServiceTest {
 
     @Test
     void rejeitaTokenAdulteradoExpiradoOuComAudienciaIncorreta() {
-        String tokenValido = gerarToken(Clock.fixed(Instant.parse("2026-07-11T15:00:00Z"), ZoneOffset.UTC));
-        String tokenAdulterado = tokenValido.substring(0, tokenValido.length() - 1) + "x";
+        String tokenValido = gerarToken(Clock.fixed(EMITIDO_EM, ZoneOffset.UTC));
+        String tokenAdulterado = adulterarAssinatura(tokenValido);
         String tokenExpirado = gerarToken(Clock.fixed(Instant.parse("2026-07-10T00:00:00Z"), ZoneOffset.UTC));
         String tokenComAudienciaIncorreta = gerarTokenComAudiencia("outra-api");
         JwtDecoder decoder = segurancaConfig.jwtDecoder(SEGREDO, ISSUER);
@@ -87,13 +89,20 @@ class TokenAcessoServiceTest {
         return service.gerar(usuario(Perfil.PARTICIPANTE)).valor();
     }
 
+    private String adulterarAssinatura(String token) {
+        String[] partes = token.split("\\.");
+        char primeiroCaractereAlterado = partes[2].charAt(0) == 'a' ? 'b' : 'a';
+        partes[2] = primeiroCaractereAlterado + partes[2].substring(1);
+        return String.join(".", partes);
+    }
+
     private String gerarTokenComAudiencia(String audiencia) {
         JwtClaimsSet claims = JwtClaimsSet.builder()
             .issuer(ISSUER)
             .audience(List.of(audiencia))
             .subject("usuario-1")
-            .issuedAt(Instant.parse("2026-07-11T15:00:00Z"))
-            .expiresAt(Instant.parse("2026-07-11T16:00:00Z"))
+            .issuedAt(EMITIDO_EM)
+            .expiresAt(EMITIDO_EM.plusSeconds(3600))
             .claim("perfil", "PARTICIPANTE")
             .build();
         JwsHeader header = JwsHeader.with(MacAlgorithm.HS256).build();

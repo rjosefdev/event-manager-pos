@@ -15,16 +15,21 @@ import java.io.InputStream;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.Date;
 import java.util.Optional;
 
+import org.bson.BsonObjectId;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.gridfs.GridFsResource;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.mock.web.MockMultipartFile;
+
+import com.mongodb.client.gridfs.model.GridFSFile;
 
 class EventoImagemServiceTest {
 
@@ -216,6 +221,54 @@ class EventoImagemServiceTest {
     }
 
     @Test
+    void buscaImagemPublicaPeloArquivoVinculadoAoEvento() {
+        Evento evento = eventoFuturo();
+        evento.anexarImagemArquivo(ARQUIVO_NOVO_ID, "banner.png", "image/png", 8L, AGORA.minusSeconds(60));
+        GridFSFile arquivo = arquivoGridFs(ARQUIVO_NOVO_ID, "banner.png", 8L);
+        GridFsResource resource = new GridFsResource(arquivo);
+        when(eventoRepository.findById("evento-1")).thenReturn(Optional.of(evento));
+        when(gridFsTemplate.findOne(any(Query.class))).thenReturn(arquivo);
+        when(gridFsTemplate.getResource(arquivo)).thenReturn(resource);
+
+        EventoImagemService.ImagemPublica imagem = service.buscarImagemPublica("evento-1");
+
+        assertThat(imagem.recurso()).isSameAs(resource);
+        assertThat(imagem.contentType()).isEqualTo("image/png");
+        assertThat(imagem.tamanhoBytes()).isEqualTo(8L);
+
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        verify(gridFsTemplate).findOne(queryCaptor.capture());
+        assertThat(queryCaptor.getValue().getQueryObject().get("_id"))
+            .isEqualTo(new ObjectId(ARQUIVO_NOVO_ID));
+    }
+
+    @Test
+    void imagemPublicaRetornaNaoEncontradoQuandoEventoNaoPossuiArquivo() {
+        Evento evento = eventoFuturo();
+        when(eventoRepository.findById("evento-1")).thenReturn(Optional.of(evento));
+
+        assertThatThrownBy(() -> service.buscarImagemPublica("evento-1"))
+            .isInstanceOf(RecursoNaoEncontradoException.class)
+            .hasMessage("Recurso não encontrado.");
+
+        verifyNoInteractions(gridFsTemplate);
+    }
+
+    @Test
+    void imagemPublicaRetornaNaoEncontradoQuandoArquivoNaoExisteNoGridFs() {
+        Evento evento = eventoFuturo();
+        evento.anexarImagemArquivo(ARQUIVO_NOVO_ID, "banner.png", "image/png", 8L, AGORA.minusSeconds(60));
+        when(eventoRepository.findById("evento-1")).thenReturn(Optional.of(evento));
+        when(gridFsTemplate.findOne(any(Query.class))).thenReturn(null);
+
+        assertThatThrownBy(() -> service.buscarImagemPublica("evento-1"))
+            .isInstanceOf(RecursoNaoEncontradoException.class)
+            .hasMessage("Recurso não encontrado.");
+
+        verify(gridFsTemplate, never()).getResource(any(GridFSFile.class));
+    }
+
+    @Test
     void rejeitaRemocaoDeEventoFinalizadoSemApagarArquivo() {
         Evento evento = eventoFinalizado();
         evento.anexarImagemArquivo(ARQUIVO_ANTIGO_ID, "banner.png", "image/png", 10L, AGORA.minusSeconds(60));
@@ -231,6 +284,17 @@ class EventoImagemServiceTest {
 
     private MockMultipartFile imagemPng(String nome, byte[] conteudo) {
         return new MockMultipartFile("arquivo", nome, "image/png", conteudo);
+    }
+
+    private GridFSFile arquivoGridFs(String id, String nome, long tamanhoBytes) {
+        return new GridFSFile(
+            new BsonObjectId(new ObjectId(id)),
+            nome,
+            tamanhoBytes,
+            255 * 1024,
+            Date.from(AGORA),
+            new Document()
+        );
     }
 
     private Evento eventoFuturo() {
