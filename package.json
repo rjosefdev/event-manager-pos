@@ -4,15 +4,15 @@
   "packageManager": "pnpm@11.10.0",
   "scripts": {
     "dev": "concurrently -n web,api \"pnpm dev:web\" \"pnpm dev:api\"",
-    "dev:web": "pnpm --dir apps/web dev",
-    "dev:api": "pnpm --dir apps/api dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
     "build": "pnpm build:web && pnpm build:api",
-    "build:web": "pnpm --dir apps/web build",
-    "build:api": "pnpm --dir apps/api build",
+    "build:web": "pnpm --filter web build",
+    "build:api": "pnpm --filter api build",
     "test": "pnpm test:web && pnpm test:api",
-    "test:web": "pnpm --dir apps/web test",
-    "test:api": "pnpm --dir apps/api test",
-    "lint": "pnpm --dir apps/web lint"
+    "test:web": "pnpm --filter web test",
+    "test:api": "pnpm --filter api test",
+    "lint": "pnpm --filter web lint"
   },
   "devDependencies": {
     "concurrently": "latest"

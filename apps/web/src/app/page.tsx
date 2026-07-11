@@ -1,65 +1,127 @@
-import Image from "next/image";
+"use client";
+
+import { FormEvent, useState } from "react";
+
+type Campos = "nome" | "email" | "senha";
+type ErrosCampos = Partial<Record<Campos, string>>;
+
+type ProblemaApi = {
+  detail?: string;
+  erros?: ErrosCampos;
+};
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 export default function Home() {
+  const [erros, setErros] = useState<ErrosCampos>({});
+  const [erroGeral, setErroGeral] = useState("");
+  const [sucesso, setSucesso] = useState("");
+  const [enviando, setEnviando] = useState(false);
+
+  async function cadastrar(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const elementoFormulario = event.currentTarget;
+    setErros({});
+    setErroGeral("");
+    setSucesso("");
+    setEnviando(true);
+
+    const formulario = new FormData(elementoFormulario);
+    const dados = {
+      nome: String(formulario.get("nome") ?? ""),
+      email: String(formulario.get("email") ?? ""),
+      senha: String(formulario.get("senha") ?? ""),
+    };
+
+    try {
+      const resposta = await fetch(`${API_URL}/autenticacao/cadastro`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados),
+      });
+
+      if (!resposta.ok) {
+        const problema = (await resposta.json()) as ProblemaApi;
+        setErros(problema.erros ?? {});
+        setErroGeral(problema.detail ?? "Não foi possível concluir o cadastro.");
+        return;
+      }
+
+      const participante = (await resposta.json()) as { nome: string };
+      setSucesso(`${participante.nome}, seu cadastro foi concluído. Agora você já pode entrar.`);
+      elementoFormulario.reset();
+    } catch {
+      setErroGeral("Não foi possível conectar à API. Tente novamente em instantes.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="pagina-cadastro">
+      <section className="apresentacao" aria-labelledby="titulo-cadastro">
+        <p className="marca">Event Manager</p>
+        <h1 id="titulo-cadastro">Encontre seu próximo evento.</h1>
+        <p className="resumo">
+          Crie sua conta de Participante para descobrir eventos e acompanhar suas inscrições em um só lugar.
+        </p>
+        <ul className="beneficios" aria-label="Benefícios da conta">
+          <li>Catálogo completo de eventos</li>
+          <li>Inscrições rápidas e organizadas</li>
+          <li>Seus dados protegidos</li>
+        </ul>
+      </section>
+
+      <section className="cartao-cadastro" aria-label="Formulário de cadastro">
+        <div>
+          <p className="etiqueta">Comece agora</p>
+          <h2>Crie sua conta</h2>
+          <p className="apoio">Preencha os dados abaixo. Leva menos de um minuto.</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+        <form onSubmit={cadastrar} noValidate>
+          <Campo nome="nome" rotulo="Nome completo" erro={erros.nome}>
+            <input id="nome" name="nome" autoComplete="name" maxLength={120} aria-invalid={Boolean(erros.nome)} aria-describedby={erros.nome ? "erro-nome" : undefined} />
+          </Campo>
+
+          <Campo nome="email" rotulo="E-mail" erro={erros.email}>
+            <input id="email" name="email" type="email" autoComplete="email" maxLength={254} aria-invalid={Boolean(erros.email)} aria-describedby={erros.email ? "erro-email" : undefined} />
+          </Campo>
+
+          <Campo nome="senha" rotulo="Senha" erro={erros.senha} dica="Use pelo menos 8 caracteres.">
+            <input id="senha" name="senha" type="password" autoComplete="new-password" aria-invalid={Boolean(erros.senha)} aria-describedby={erros.senha ? "erro-senha" : "dica-senha"} />
+          </Campo>
+
+          {erroGeral && <p className="mensagem erro-geral" role="alert">{erroGeral}</p>}
+          {sucesso && <p className="mensagem sucesso" role="status">{sucesso}</p>}
+
+          <button type="submit" disabled={enviando}>
+            {enviando ? "Criando conta…" : "Criar minha conta"}
+          </button>
+        </form>
+      </section>
+    </main>
+  );
+}
+
+function Campo({
+  nome,
+  rotulo,
+  erro,
+  dica,
+  children,
+}: {
+  nome: Campos;
+  rotulo: string;
+  erro?: string;
+  dica?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="campo">
+      <label htmlFor={nome}>{rotulo}</label>
+      {children}
+      {erro ? <p id={`erro-${nome}`} className="erro-campo">{erro}</p> : dica ? <p id={`dica-${nome}`} className="dica">{dica}</p> : null}
     </div>
   );
 }
