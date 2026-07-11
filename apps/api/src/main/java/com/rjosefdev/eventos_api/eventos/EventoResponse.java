@@ -14,6 +14,7 @@ public record EventoResponse(
     String categoria,
     int vagas,
     String imagemUrl,
+    boolean possuiImagemArquivo,
     boolean cancelado,
     SituacaoTemporalEvento situacaoTemporal
 ) {
@@ -29,7 +30,8 @@ public record EventoResponse(
             evento.isOnline(),
             evento.getCategoria(),
             evento.getVagas(),
-            evento.getImagemUrl(),
+            evento.getImagemUrlEfetiva(),
+            evento.possuiImagemArquivo(),
             evento.isCancelado(),
             calcularSituacaoTemporal(evento, agora)
         );

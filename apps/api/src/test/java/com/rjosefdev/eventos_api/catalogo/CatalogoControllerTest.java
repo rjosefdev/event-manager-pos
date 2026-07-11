@@ -147,6 +147,7 @@ class CatalogoControllerTest {
             "Tecnologia",
             80,
             "https://exemplo.com/evento.png",
+            false,
             cancelado,
             situacaoTemporal,
             vagasDisponiveis,

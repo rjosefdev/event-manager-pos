@@ -329,6 +329,7 @@ class EventoControllerTest {
             80,
             "https://exemplo.com/evento.png",
             false,
+            false,
             situacaoTemporal
         );
     }
@@ -351,6 +352,7 @@ class EventoControllerTest {
             "Tecnologia",
             80,
             "https://exemplo.com/evento.png",
+            false,
             true,
             situacaoTemporal
         );

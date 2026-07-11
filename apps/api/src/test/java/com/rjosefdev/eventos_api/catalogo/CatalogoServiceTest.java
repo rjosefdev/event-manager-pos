@@ -124,6 +124,49 @@ class CatalogoServiceTest {
     }
 
     @Test
+    void catalogoRetornaUrlEfetivaDaImagemDoEvento() {
+        Evento comUrlExterna = evento("evento-url", "Backend Day", 80,
+            Instant.parse("2026-07-12T15:00:00Z"), Instant.parse("2026-07-12T18:00:00Z"));
+        comUrlExterna.editar(
+            comUrlExterna.getTitulo(),
+            comUrlExterna.getDescricao(),
+            comUrlExterna.getIniciaEm(),
+            comUrlExterna.getTerminaEm(),
+            comUrlExterna.getLocal(),
+            comUrlExterna.isOnline(),
+            comUrlExterna.getCategoria(),
+            comUrlExterna.getVagas(),
+            "https://exemplo.com/evento.png",
+            AGORA
+        );
+        Evento comArquivo = evento("evento-arquivo", "Frontend Summit", 80,
+            Instant.parse("2026-07-13T15:00:00Z"), Instant.parse("2026-07-13T18:00:00Z"));
+        comArquivo.editar(
+            comArquivo.getTitulo(),
+            comArquivo.getDescricao(),
+            comArquivo.getIniciaEm(),
+            comArquivo.getTerminaEm(),
+            comArquivo.getLocal(),
+            comArquivo.isOnline(),
+            comArquivo.getCategoria(),
+            comArquivo.getVagas(),
+            "https://exemplo.com/banner-antigo.png",
+            AGORA
+        );
+        comArquivo.anexarImagemArquivo("arquivo-1", "banner.png", "image/png", 84512L, AGORA);
+        when(eventoRepository.findAllByOrderByIniciaEmAsc()).thenReturn(List.of(comUrlExterna, comArquivo));
+
+        List<CatalogoEventoResponse> catalogo = service.listar();
+
+        assertThat(catalogo)
+            .extracting(CatalogoEventoResponse::imagemUrl)
+            .containsExactly("https://exemplo.com/evento.png", "/catalogo/eventos/evento-arquivo/imagem");
+        assertThat(catalogo)
+            .extracting(CatalogoEventoResponse::possuiImagemArquivo)
+            .containsExactly(false, true);
+    }
+
+    @Test
     void eventoInexistenteRetornaNaoEncontradoSemContarInscricoes() {
         when(eventoRepository.findById("evento-inexistente")).thenReturn(Optional.empty());
 

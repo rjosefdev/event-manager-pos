@@ -46,6 +46,8 @@ class EventoServiceTest {
         assertThat(persistido.getCategoria()).isEqualTo("Tecnologia");
         assertThat(persistido.getVagas()).isEqualTo(80);
         assertThat(persistido.getImagemUrl()).isNull();
+        assertThat(response.imagemUrl()).isNull();
+        assertThat(response.possuiImagemArquivo()).isFalse();
         assertThat(persistido.isCancelado()).isFalse();
         assertThat(persistido.getCriadoEm()).isEqualTo(AGORA);
         assertThat(response.organizadorId()).isEqualTo("organizador-1");
@@ -104,6 +106,32 @@ class EventoServiceTest {
     }
 
     @Test
+    void responsePriorizaImagemDeArquivoSemApagarUrlExternaPersistida() {
+        Evento evento = evento("evento-1", "organizador-1", "Backend Day",
+            Instant.parse("2026-07-12T15:00:00Z"), Instant.parse("2026-07-12T18:00:00Z"));
+        evento.editar(
+            evento.getTitulo(),
+            evento.getDescricao(),
+            evento.getIniciaEm(),
+            evento.getTerminaEm(),
+            evento.getLocal(),
+            evento.isOnline(),
+            evento.getCategoria(),
+            evento.getVagas(),
+            "https://exemplo.com/banner-antigo.png",
+            AGORA
+        );
+        evento.anexarImagemArquivo("arquivo-1", "banner.png", "image/png", 84512L, AGORA);
+        when(repository.findByIdAndOrganizadorId("evento-1", "organizador-1")).thenReturn(Optional.of(evento));
+
+        EventoResponse response = service.buscarDoOrganizador("organizador-1", "evento-1");
+
+        assertThat(evento.getImagemUrl()).isEqualTo("https://exemplo.com/banner-antigo.png");
+        assertThat(response.imagemUrl()).isEqualTo("/catalogo/eventos/evento-1/imagem");
+        assertThat(response.possuiImagemArquivo()).isTrue();
+    }
+
+    @Test
     void rejeitaPeriodoSemTerminoPosteriorAoInicio() {
         CriarEventoRequest request = new CriarEventoRequest(
             "Backend Day",
@@ -146,6 +174,8 @@ class EventoServiceTest {
         assertThat(persistido.getImagemUrl()).isEqualTo("https://exemplo.com/frontend.png");
         assertThat(persistido.getAtualizadoEm()).isEqualTo(AGORA);
         assertThat(response.titulo()).isEqualTo("Frontend Summit");
+        assertThat(response.imagemUrl()).isEqualTo("https://exemplo.com/frontend.png");
+        assertThat(response.possuiImagemArquivo()).isFalse();
         assertThat(response.situacaoTemporal()).isEqualTo(SituacaoTemporalEvento.FUTURO);
     }
 

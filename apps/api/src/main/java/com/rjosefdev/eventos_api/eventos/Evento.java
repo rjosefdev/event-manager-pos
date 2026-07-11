@@ -20,6 +20,10 @@ public class Evento {
     private String categoria;
     private int vagas;
     private String imagemUrl;
+    private String imagemArquivoId;
+    private String imagemArquivoNome;
+    private String imagemContentType;
+    private Long imagemTamanhoBytes;
     private boolean cancelado;
     private Instant criadoEm;
     private Instant atualizadoEm;
@@ -66,11 +70,26 @@ public class Evento {
     public String getCategoria() { return categoria; }
     public int getVagas() { return vagas; }
     public String getImagemUrl() { return imagemUrl; }
+    public String getImagemArquivoId() { return imagemArquivoId; }
+    public String getImagemArquivoNome() { return imagemArquivoNome; }
+    public String getImagemContentType() { return imagemContentType; }
+    public Long getImagemTamanhoBytes() { return imagemTamanhoBytes; }
     public boolean isCancelado() { return cancelado; }
     public Instant getCriadoEm() { return criadoEm; }
     public Instant getAtualizadoEm() { return atualizadoEm; }
 
     public void setId(String id) { this.id = id; }
+
+    public boolean possuiImagemArquivo() {
+        return imagemArquivoId != null && !imagemArquivoId.isBlank();
+    }
+
+    public String getImagemUrlEfetiva() {
+        if (possuiImagemArquivo()) {
+            return "/catalogo/eventos/" + id + "/imagem";
+        }
+        return imagemUrl;
+    }
 
     public void editar(
         String titulo,
@@ -98,6 +117,28 @@ public class Evento {
 
     public void cancelar(Instant atualizadoEm) {
         this.cancelado = true;
+        this.atualizadoEm = atualizadoEm;
+    }
+
+    public void anexarImagemArquivo(
+        String imagemArquivoId,
+        String imagemArquivoNome,
+        String imagemContentType,
+        Long imagemTamanhoBytes,
+        Instant atualizadoEm
+    ) {
+        this.imagemArquivoId = imagemArquivoId;
+        this.imagemArquivoNome = imagemArquivoNome;
+        this.imagemContentType = imagemContentType;
+        this.imagemTamanhoBytes = imagemTamanhoBytes;
+        this.atualizadoEm = atualizadoEm;
+    }
+
+    public void removerImagemArquivo(Instant atualizadoEm) {
+        this.imagemArquivoId = null;
+        this.imagemArquivoNome = null;
+        this.imagemContentType = null;
+        this.imagemTamanhoBytes = null;
         this.atualizadoEm = atualizadoEm;
     }
 }

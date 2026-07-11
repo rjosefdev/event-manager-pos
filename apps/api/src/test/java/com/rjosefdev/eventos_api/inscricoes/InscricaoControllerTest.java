@@ -212,6 +212,7 @@ class InscricaoControllerTest {
                 80,
                 null,
                 false,
+                false,
                 SituacaoTemporalEvento.FUTURO,
                 20,
                 true
