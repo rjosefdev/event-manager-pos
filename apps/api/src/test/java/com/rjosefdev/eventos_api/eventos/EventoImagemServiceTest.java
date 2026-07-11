@@ -176,6 +176,59 @@ class EventoImagemServiceTest {
         verify(eventoRepository, never()).save(any(Evento.class));
     }
 
+    @Test
+    void removeImagemDeArquivoMantendoUrlExterna() {
+        Evento evento = eventoFuturo();
+        evento.anexarImagemArquivo(ARQUIVO_ANTIGO_ID, "banner.png", "image/png", 10L, AGORA.minusSeconds(60));
+        when(eventoRepository.findByIdAndOrganizadorId("evento-1", "organizador-1")).thenReturn(Optional.of(evento));
+        when(eventoRepository.save(any(Evento.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        EventoResponse response = service.remover("organizador-1", "evento-1");
+
+        ArgumentCaptor<Evento> eventoCaptor = ArgumentCaptor.forClass(Evento.class);
+        verify(eventoRepository).save(eventoCaptor.capture());
+        Evento persistido = eventoCaptor.getValue();
+        assertThat(persistido.getImagemArquivoId()).isNull();
+        assertThat(persistido.getImagemArquivoNome()).isNull();
+        assertThat(persistido.getImagemContentType()).isNull();
+        assertThat(persistido.getImagemTamanhoBytes()).isNull();
+        assertThat(persistido.getAtualizadoEm()).isEqualTo(AGORA);
+        assertThat(response.imagemUrl()).isEqualTo("https://exemplo.com/banner-externo.png");
+        assertThat(response.possuiImagemArquivo()).isFalse();
+
+        ArgumentCaptor<Query> queryCaptor = ArgumentCaptor.forClass(Query.class);
+        verify(gridFsTemplate).delete(queryCaptor.capture());
+        assertThat(queryCaptor.getValue().getQueryObject().get("_id"))
+            .isEqualTo(new ObjectId(ARQUIVO_ANTIGO_ID));
+    }
+
+    @Test
+    void removerImagemSemArquivoEnviadoRetornaEventoSemAlterarPersistencia() {
+        Evento evento = eventoFuturo();
+        when(eventoRepository.findByIdAndOrganizadorId("evento-1", "organizador-1")).thenReturn(Optional.of(evento));
+
+        EventoResponse response = service.remover("organizador-1", "evento-1");
+
+        assertThat(response.imagemUrl()).isEqualTo("https://exemplo.com/banner-externo.png");
+        assertThat(response.possuiImagemArquivo()).isFalse();
+        verify(eventoRepository, never()).save(any(Evento.class));
+        verifyNoInteractions(gridFsTemplate);
+    }
+
+    @Test
+    void rejeitaRemocaoDeEventoFinalizadoSemApagarArquivo() {
+        Evento evento = eventoFinalizado();
+        evento.anexarImagemArquivo(ARQUIVO_ANTIGO_ID, "banner.png", "image/png", 10L, AGORA.minusSeconds(60));
+        when(eventoRepository.findByIdAndOrganizadorId("evento-1", "organizador-1")).thenReturn(Optional.of(evento));
+
+        assertThatThrownBy(() -> service.remover("organizador-1", "evento-1"))
+            .isInstanceOf(EventoFinalizadoException.class)
+            .hasMessage("Eventos finalizados não podem ser alterados ou cancelados.");
+
+        verify(eventoRepository, never()).save(any(Evento.class));
+        verifyNoInteractions(gridFsTemplate);
+    }
+
     private MockMultipartFile imagemPng(String nome, byte[] conteudo) {
         return new MockMultipartFile("arquivo", nome, "image/png", conteudo);
     }

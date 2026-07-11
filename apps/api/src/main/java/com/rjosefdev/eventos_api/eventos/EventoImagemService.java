@@ -65,6 +65,22 @@ public class EventoImagemService {
         return EventoResponse.de(eventoSalvo, agora);
     }
 
+    public EventoResponse remover(String organizadorId, String eventoId) {
+        Instant agora = clock.instant();
+        Evento evento = buscarEventoProprioEditavel(organizadorId, eventoId, agora);
+        String arquivoAntigoId = evento.getImagemArquivoId();
+
+        if (!evento.possuiImagemArquivo()) {
+            return EventoResponse.de(evento, agora);
+        }
+
+        evento.removerImagemArquivo(agora);
+        Evento eventoSalvo = eventoRepository.save(evento);
+
+        removerArquivoSeExistir(arquivoAntigoId);
+        return EventoResponse.de(eventoSalvo, agora);
+    }
+
     private Evento buscarEventoProprioEditavel(String organizadorId, String eventoId, Instant agora) {
         Evento evento = eventoRepository.findByIdAndOrganizadorId(eventoId, organizadorId)
             .orElseThrow(RecursoNaoEncontradoException::new);

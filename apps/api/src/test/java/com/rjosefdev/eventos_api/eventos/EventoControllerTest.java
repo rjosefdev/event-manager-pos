@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -26,6 +27,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.mock.web.MockMultipartFile;
 
 import com.rjosefdev.eventos_api.config.ApiExceptionHandler;
 import com.rjosefdev.eventos_api.config.ErroSegurancaHandler;
@@ -41,6 +43,9 @@ class EventoControllerTest {
 
     @MockitoBean
     private EventoService eventoService;
+
+    @MockitoBean
+    private EventoImagemService eventoImagemService;
 
     @Test
     void organizadorCriaEventoComOrganizadorIdDerivadoDoJwt() throws Exception {
@@ -118,7 +123,7 @@ class EventoControllerTest {
     }
 
     @Test
-    void participanteNaoPodeCriarNemListarEventosDeOrganizador() throws Exception {
+    void participanteNaoPodeAcessarRotasDeOrganizador() throws Exception {
         mockMvc.perform(post("/eventos")
                 .with(jwtParticipante("participante-1"))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +146,24 @@ class EventoControllerTest {
             .andExpect(status().isForbidden())
             .andExpect(jsonPath("$.codigo").value("ACESSO_NEGADO"));
 
-        verifyNoInteractions(eventoService);
+        MockMultipartFile arquivo = new MockMultipartFile(
+            "arquivo",
+            "banner.png",
+            "image/png",
+            "conteudo".getBytes()
+        );
+
+        mockMvc.perform(multipart("/eventos/evento-1/imagem")
+                .file(arquivo)
+                .with(jwtParticipante("participante-1")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.codigo").value("ACESSO_NEGADO"));
+
+        mockMvc.perform(delete("/eventos/evento-1/imagem").with(jwtParticipante("participante-1")))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.codigo").value("ACESSO_NEGADO"));
+
+        verifyNoInteractions(eventoService, eventoImagemService);
     }
 
     @Test
@@ -197,6 +219,65 @@ class EventoControllerTest {
             .andExpect(jsonPath("$.titulo").value("Frontend Summit"));
 
         verify(eventoService).atualizar(eq("organizador-1"), eq("evento-1"), any());
+    }
+
+    @Test
+    void organizadorEnviaImagemUsandoOrganizadorIdDerivadoDoJwt() throws Exception {
+        when(eventoImagemService.anexar(eq("organizador-1"), eq("evento-1"), any())).thenReturn(
+            responseComImagemArquivo("evento-1", "organizador-1", "Backend Day", SituacaoTemporalEvento.FUTURO)
+        );
+        MockMultipartFile arquivo = new MockMultipartFile(
+            "arquivo",
+            "banner.png",
+            "image/png",
+            "conteudo".getBytes()
+        );
+
+        mockMvc.perform(multipart("/eventos/evento-1/imagem")
+                .file(arquivo)
+                .with(jwtOrganizador("organizador-1")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value("evento-1"))
+            .andExpect(jsonPath("$.organizadorId").value("organizador-1"))
+            .andExpect(jsonPath("$.imagemUrl").value("/catalogo/eventos/evento-1/imagem"))
+            .andExpect(jsonPath("$.possuiImagemArquivo").value(true));
+
+        verify(eventoImagemService).anexar(eq("organizador-1"), eq("evento-1"), any());
+    }
+
+    @Test
+    void organizadorRemoveImagemEnviadaUsandoOrganizadorIdDerivadoDoJwt() throws Exception {
+        when(eventoImagemService.remover("organizador-1", "evento-1")).thenReturn(
+            response("evento-1", "organizador-1", "Backend Day", SituacaoTemporalEvento.FUTURO)
+        );
+
+        mockMvc.perform(delete("/eventos/evento-1/imagem").with(jwtOrganizador("organizador-1")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value("evento-1"))
+            .andExpect(jsonPath("$.organizadorId").value("organizador-1"))
+            .andExpect(jsonPath("$.imagemUrl").value("https://exemplo.com/evento.png"))
+            .andExpect(jsonPath("$.possuiImagemArquivo").value(false));
+
+        verify(eventoImagemService).remover("organizador-1", "evento-1");
+    }
+
+    @Test
+    void uploadDeImagemInvalidaRetornaBadRequest() throws Exception {
+        when(eventoImagemService.anexar(eq("organizador-1"), eq("evento-1"), any()))
+            .thenThrow(new EventoImagemInvalidaException("Tipo de imagem não permitido."));
+        MockMultipartFile arquivo = new MockMultipartFile(
+            "arquivo",
+            "banner.txt",
+            "text/plain",
+            "texto".getBytes()
+        );
+
+        mockMvc.perform(multipart("/eventos/evento-1/imagem")
+                .file(arquivo)
+                .with(jwtOrganizador("organizador-1")))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.title").value("Imagem do evento inválida"))
+            .andExpect(jsonPath("$.codigo").value("EVENTO_IMAGEM_INVALIDA"));
     }
 
     @Test
@@ -354,6 +435,30 @@ class EventoControllerTest {
             "https://exemplo.com/evento.png",
             false,
             true,
+            situacaoTemporal
+        );
+    }
+
+    private EventoResponse responseComImagemArquivo(
+        String id,
+        String organizadorId,
+        String titulo,
+        SituacaoTemporalEvento situacaoTemporal
+    ) {
+        return new EventoResponse(
+            id,
+            organizadorId,
+            titulo,
+            "Palestras sobre Java e Spring.",
+            Instant.parse("2026-07-12T15:00:00Z"),
+            Instant.parse("2026-07-12T18:00:00Z"),
+            "Auditório 1",
+            false,
+            "Tecnologia",
+            80,
+            "/catalogo/eventos/" + id + "/imagem",
+            true,
+            false,
             situacaoTemporal
         );
     }

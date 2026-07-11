@@ -15,6 +15,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import com.rjosefdev.eventos_api.autenticacao.CredenciaisInvalidasException;
 import com.rjosefdev.eventos_api.autenticacao.EmailJaCadastradoException;
 import com.rjosefdev.eventos_api.eventos.EventoFinalizadoException;
+import com.rjosefdev.eventos_api.eventos.EventoImagemInvalidaException;
 import com.rjosefdev.eventos_api.eventos.PeriodoEventoInvalidoException;
 import com.rjosefdev.eventos_api.eventos.RecursoNaoEncontradoException;
 import com.rjosefdev.eventos_api.inscricoes.InscricaoNaoPermitidaException;
@@ -100,6 +101,19 @@ public class ApiExceptionHandler {
         problema.setTitle("Evento finalizado");
         problema.setInstance(URI.create(request.getRequest().getRequestURI()));
         problema.setProperty("codigo", "EVENTO_FINALIZADO");
+        return problema;
+    }
+
+    @ExceptionHandler(EventoImagemInvalidaException.class)
+    ProblemDetail eventoImagemInvalida(
+        EventoImagemInvalidaException exception,
+        ServletWebRequest request
+    ) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.getMessage());
+        problema.setType(URI.create("https://event-manager.local/problemas/evento-imagem-invalida"));
+        problema.setTitle("Imagem do evento inválida");
+        problema.setInstance(URI.create(request.getRequest().getRequestURI()));
+        problema.setProperty("codigo", "EVENTO_IMAGEM_INVALIDA");
         return problema;
     }
 
