@@ -15,9 +15,14 @@ import jakarta.validation.Valid;
 public class AutenticacaoController {
 
     private final CadastroParticipanteService cadastroParticipanteService;
+    private final LoginService loginService;
 
-    public AutenticacaoController(CadastroParticipanteService cadastroParticipanteService) {
+    public AutenticacaoController(
+        CadastroParticipanteService cadastroParticipanteService,
+        LoginService loginService
+    ) {
         this.cadastroParticipanteService = cadastroParticipanteService;
+        this.loginService = loginService;
     }
 
     @PostMapping("/cadastro")
@@ -28,6 +33,13 @@ public class AutenticacaoController {
         return ResponseEntity
             .created(URI.create("/usuarios/" + participante.id()))
             .body(participante);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+        @Valid @RequestBody LoginRequest request
+    ) {
+        return ResponseEntity.ok(loginService.autenticar(request));
     }
     
 }

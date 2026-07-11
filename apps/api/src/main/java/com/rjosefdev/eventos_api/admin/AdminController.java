@@ -4,16 +4,22 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rjosefdev.eventos_api.config.OpenApiConfig;
+
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/admin")
+@PreAuthorize("hasRole('ORGANIZADOR')")
+@SecurityRequirement(name = OpenApiConfig.ESQUEMA_BEARER_JWT)
 public class AdminController {
 
     private final AdminService adminService;

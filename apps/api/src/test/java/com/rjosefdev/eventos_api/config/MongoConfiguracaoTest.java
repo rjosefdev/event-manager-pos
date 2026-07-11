@@ -18,6 +18,15 @@ import org.springframework.core.io.ClassPathResource;
 class MongoConfiguracaoTest {
 
     @Test
+    void importaEnvOpcionalDaRaizEDeAppsApi() throws IOException {
+        Properties propriedades = new Properties();
+        propriedades.load(new ClassPathResource("application.properties").getInputStream());
+
+        assertThat(propriedades.getProperty("spring.config.import"))
+            .isEqualTo("optional:file:.env[.properties],optional:file:apps/api/.env[.properties]");
+    }
+
+    @Test
     void defineDatabaseMesmoQuandoUriNaoContemNomeDoBanco() throws IOException {
         Properties propriedades = new Properties();
         propriedades.load(new ClassPathResource("application.properties").getInputStream());

@@ -1,0 +1,2313 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-07-11T16:00:00.000Z",
+  "__export_source": "codex:event-manager-pos",
+  "resources": [
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "wrk_event_manager_pos",
+      "parentId": null,
+      "name": "API - Event Manager POS",
+      "description": "Collection gerada a partir dos controllers e da configuracao real de apps/api.",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "env_event_manager_base",
+      "parentId": "wrk_event_manager_pos",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "",
+        "api_prefix": "",
+        "access_token": "",
+        "organizer_access_token": "",
+        "participant_access_token": "",
+        "refresh_token": "",
+        "user_id": "",
+        "organizer_id": "",
+        "participant_id": "",
+        "evento_id": "",
+        "inscricao_id": "",
+        "id_inexistente": "000000000000000000000000",
+        "organizer_email": "PREENCHER_EMAIL_ORGANIZADOR",
+        "organizer_password": "PREENCHER_SENHA_ORGANIZADOR",
+        "participant_name": "Participante Insomnia",
+        "participant_email": "PREENCHER_EMAIL_PARTICIPANTE",
+        "participant_password": "PREENCHER_SENHA_PARTICIPANTE",
+        "new_organizer_name": "Organizador Insomnia",
+        "new_organizer_email": "PREENCHER_NOVO_EMAIL_ORGANIZADOR",
+        "new_organizer_password": "PREENCHER_NOVA_SENHA_ORGANIZADOR",
+        "imagem_url": "https://exemplo.invalid/evento.png",
+        "page": 1,
+        "page_size": 20
+      },
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 0,
+      "_type": "environment"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "env_event_manager_local",
+      "parentId": "env_event_manager_base",
+      "name": "Local",
+      "data": {
+        "base_url": "http://localhost:8080"
+      },
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": -100000,
+      "_type": "environment"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "env_event_manager_homologacao",
+      "parentId": "env_event_manager_base",
+      "name": "Homologacao",
+      "data": {
+        "base_url": "PREENCHER_URL_DE_HOMOLOGACAO"
+      },
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": -99999,
+      "_type": "environment"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "env_event_manager_producao",
+      "parentId": "env_event_manager_base",
+      "name": "Producao",
+      "data": {
+        "base_url": "PREENCHER_URL_DE_PRODUCAO"
+      },
+      "dataPropertyOrder": null,
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": -99998,
+      "_type": "environment"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_00_infra",
+      "parentId": "wrk_event_manager_pos",
+      "name": "00 - Infra",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99997,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_infra_health",
+      "parentId": "fld_00_infra",
+      "name": "Health Check",
+      "description": "Endpoint do Spring Boot Actuator. Exige autenticacao por causa de anyRequest().authenticated(). Esperado: 200 com {\"status\":\"UP\"}.",
+      "url": "{{ base_url }}{{ api_prefix }}/actuator/health",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Aplicacao esta UP\", () => insomnia.expect(insomnia.response.json().status).to.equal(\"UP\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99996,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_infra_health",
+      "parentId": "req_infra_health",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/actuator/health",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"status\": \"UP\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99995,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_01_auth",
+      "parentId": "wrk_event_manager_pos",
+      "name": "01 - Autenticacao",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "none"
+      },
+      "headers": [],
+      "metaSortKey": -99994,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_auth_cadastro",
+      "parentId": "fld_01_auth",
+      "name": "Cadastrar participante",
+      "description": "Publico. nome: obrigatorio, max. 120; email: valido, max. 254; senha: minimo 8 caracteres e maximo 72 bytes UTF-8. O perfil e sempre PARTICIPANTE. Resposta 201: {id,nome,email,perfil}. Pode retornar 400 DADOS_INVALIDOS ou 409 EMAIL_JA_CADASTRADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/cadastro",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"{{ participant_name }}\",\n  \"email\": \"{{ participant_email }}\",\n  \"senha\": \"{{ participant_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(201);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.perfil).to.equal(\"PARTICIPANTE\");\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"participant_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99993,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_auth_cadastro",
+      "parentId": "req_auth_cadastro",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/cadastro",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"participante-1\",\n  \"nome\": \"Participante Insomnia\",\n  \"email\": \"participante@exemplo.com\",\n  \"perfil\": \"PARTICIPANTE\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99992,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_auth_login_participant",
+      "parentId": "fld_01_auth",
+      "name": "Login como participante",
+      "description": "Publico. Retorna {tokenAcesso,tipoToken,expiraEm,usuario}. Salva access_token, participant_access_token, user_id e participant_id. Pode retornar 400 DADOS_INVALIDOS ou 401 CREDENCIAIS_INVALIDAS.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ participant_email }}\",\n  \"senha\": \"{{ participant_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem token e usuario\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.tokenAcesso).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.tipoToken).to.equal(\"Bearer\");\n  insomnia.expect(body.usuario?.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.tokenAcesso) throw new Error(\"tokenAcesso nao encontrado na resposta de login.\");\ninsomnia.environment.set(\"access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"user_id\", body.usuario.id);\ninsomnia.environment.set(\"participant_access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"participant_id\", body.usuario.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99991,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_auth_login_participant",
+      "parentId": "req_auth_login_participant",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"tokenAcesso\": \"TOKEN_JWT_EXEMPLO\",\n  \"tipoToken\": \"Bearer\",\n  \"expiraEm\": \"2030-07-11T16:00:00Z\",\n  \"usuario\": {\n    \"id\": \"usuario-1\",\n    \"nome\": \"Usuario Exemplo\",\n    \"email\": \"usuario@exemplo.com\",\n    \"perfil\": \"PARTICIPANTE\"\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99990,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_auth_login_organizer",
+      "parentId": "fld_01_auth",
+      "name": "Login como organizador",
+      "description": "Publico. Retorna {tokenAcesso,tipoToken,expiraEm,usuario}. Salva access_token, organizer_access_token, user_id e organizer_id.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ organizer_email }}\",\n  \"senha\": \"{{ organizer_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem token e usuario\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.tokenAcesso).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.tipoToken).to.equal(\"Bearer\");\n  insomnia.expect(body.usuario?.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.tokenAcesso) throw new Error(\"tokenAcesso nao encontrado na resposta de login.\");\ninsomnia.environment.set(\"access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"user_id\", body.usuario.id);\ninsomnia.environment.set(\"organizer_access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"organizer_id\", body.usuario.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99989,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_auth_login_organizer",
+      "parentId": "req_auth_login_organizer",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"tokenAcesso\": \"TOKEN_JWT_EXEMPLO\",\n  \"tipoToken\": \"Bearer\",\n  \"expiraEm\": \"2030-07-11T16:00:00Z\",\n  \"usuario\": {\n    \"id\": \"usuario-1\",\n    \"nome\": \"Usuario Exemplo\",\n    \"email\": \"usuario@exemplo.com\",\n    \"perfil\": \"ORGANIZADOR\"\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99988,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_10_users",
+      "parentId": "wrk_event_manager_pos",
+      "name": "10 - Usuarios autenticados",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99987,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_users_current",
+      "parentId": "fld_10_users",
+      "name": "Buscar usuario autenticado",
+      "description": "Qualquer usuario autenticado. Resposta 200: {id,nome,email,perfil}, perfil ORGANIZADOR ou PARTICIPANTE. Token sem usuario correspondente retorna 401 NAO_AUTENTICADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/usuarios/atual",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem usuario\", () => insomnia.expect(insomnia.response.json().id).to.be.a(\"string\").and.not.empty);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99986,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_users_current",
+      "parentId": "req_users_current",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/usuarios/atual",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"usuario-1\",\n  \"nome\": \"Usuario Exemplo\",\n  \"email\": \"usuario@exemplo.com\",\n  \"perfil\": \"PARTICIPANTE\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99985,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_20_admin",
+      "parentId": "wrk_event_manager_pos",
+      "name": "20 - Administracao",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99984,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_admin_create_organizer",
+      "parentId": "fld_20_admin",
+      "name": "Cadastrar organizador",
+      "description": "Somente ORGANIZADOR. Mesmo contrato de validacao do cadastro publico; o perfil criado e sempre ORGANIZADOR. Resposta 201: {id,nome,email,perfil,ativo,criadoEm,atualizadoEm}. Pode retornar 409 EMAIL_JA_CADASTRADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/admin/organizadores",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"{{ new_organizer_name }}\",\n  \"email\": \"{{ new_organizer_email }}\",\n  \"senha\": \"{{ new_organizer_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(201);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.perfil).to.equal(\"ORGANIZADOR\");\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"organizer_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99983,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_admin_create_organizer",
+      "parentId": "req_admin_create_organizer",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/admin/organizadores",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"organizador-1\",\n  \"nome\": \"Organizador Insomnia\",\n  \"email\": \"organizador@exemplo.com\",\n  \"perfil\": \"ORGANIZADOR\",\n  \"ativo\": true,\n  \"criadoEm\": \"2030-07-11T15:00:00Z\",\n  \"atualizadoEm\": \"2030-07-11T15:00:00Z\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99982,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_admin_list_users",
+      "parentId": "fld_20_admin",
+      "name": "Listar usuarios",
+      "description": "Somente ORGANIZADOR. Resposta 200: array de {id,nome,email,perfil,ativo,criadoEm,atualizadoEm}. Nao ha paginacao ou filtros.",
+      "url": "{{ base_url }}{{ api_prefix }}/admin/usuarios",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna uma colecao\", () => insomnia.expect(insomnia.response.json()).to.be.an(\"array\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99981,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_admin_list_users",
+      "parentId": "req_admin_list_users",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/admin/usuarios",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"usuario-1\",\n    \"nome\": \"Usuario Exemplo\",\n    \"email\": \"usuario@exemplo.com\",\n    \"perfil\": \"PARTICIPANTE\",\n    \"ativo\": true,\n    \"criadoEm\": \"2030-07-11T15:00:00Z\",\n    \"atualizadoEm\": \"2030-07-11T15:00:00Z\"\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99980,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_30_events",
+      "parentId": "wrk_event_manager_pos",
+      "name": "30 - Eventos do organizador",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99979,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_events_create",
+      "parentId": "fld_30_events",
+      "name": "Criar evento",
+      "description": "Somente ORGANIZADOR. titulo max. 120; descricao max. 2000; iniciaEm/terminaEm ISO 8601 obrigatorios e termino posterior ao inicio; local max. 180; categoria max. 80; vagas >= 1; imagemUrl opcional max. 500. Resposta 201: EventoResponse. Salva evento_id.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"{{ imagem_url }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(201);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.organizadorId).to.be.a(\"string\");\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"evento_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99978,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_events_create",
+      "parentId": "req_events_create",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99977,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_events_list",
+      "parentId": "fld_30_events",
+      "name": "Listar meus eventos",
+      "description": "Somente ORGANIZADOR. Lista apenas eventos cujo organizadorId e o subject do JWT, ordenados por iniciaEm. SituacaoTemporal: FUTURO, EM_ANDAMENTO ou FINALIZADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna uma colecao\", () => insomnia.expect(insomnia.response.json()).to.be.an(\"array\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99976,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_events_list",
+      "parentId": "req_events_list",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"evento-1\",\n    \"organizadorId\": \"organizador-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\"\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99975,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_events_get",
+      "parentId": "fld_30_events",
+      "name": "Buscar meu evento",
+      "description": "Somente ORGANIZADOR e dono do evento. Retorna 200 EventoResponse; 404 para ID ausente/de outro organizador.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna o evento\", () => insomnia.expect(insomnia.response.json().id).to.equal(\"{{ evento_id }}\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99974.5,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_events_get",
+      "parentId": "req_events_get",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99974.25,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_events_update",
+      "parentId": "fld_30_events",
+      "name": "Atualizar evento",
+      "description": "Somente ORGANIZADOR e dono do evento. Substituicao completa com o mesmo contrato da criacao. Retorna 200 EventoResponse; 404 para ID ausente/de outro organizador; 409 se finalizado.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Backend Day - Atualizado\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 100,\n  \"imagemUrl\": \"{{ imagem_url }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Evento atualizado\", () => insomnia.expect(insomnia.response.json().id).to.equal(\"{{ evento_id }}\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99974,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_events_update",
+      "parentId": "req_events_update",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99973,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_events_cancel",
+      "parentId": "fld_30_events",
+      "name": "Cancelar evento",
+      "description": "Somente ORGANIZADOR e dono do evento. Cancelamento logico: retorna 200 EventoResponse com cancelado=true. Retorna 404 para ID ausente/de outro organizador e 409 se finalizado.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Evento cancelado\", () => insomnia.expect(insomnia.response.json().cancelado).to.equal(true));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99972,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_events_cancel",
+      "parentId": "req_events_cancel",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": true,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99971,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_40_catalog",
+      "parentId": "wrk_event_manager_pos",
+      "name": "40 - Catalogo de eventos",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ participant_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99970,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_catalog_list",
+      "parentId": "fld_40_catalog",
+      "name": "Listar catalogo de eventos",
+      "description": "Somente PARTICIPANTE. Retorna array de CatalogoEventoResponse, incluindo situacaoTemporal, vagasDisponiveis e inscricaoPermitida. Query params opcionais: busca em titulo/descricao, categoria exata case-insensitive e ordem=asc|desc por iniciaEm.",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "busca",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "categoria",
+          "value": "",
+          "disabled": true
+        },
+        {
+          "name": "ordem",
+          "value": "asc",
+          "disabled": true
+        }
+      ],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna uma colecao\", () => insomnia.expect(insomnia.response.json()).to.be.an(\"array\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99969,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_catalog_list",
+      "parentId": "req_catalog_list",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99968,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_catalog_get",
+      "parentId": "fld_40_catalog",
+      "name": "Buscar detalhes do evento",
+      "description": "Somente PARTICIPANTE. Retorna 200 CatalogoEventoResponse: {id,titulo,descricao,iniciaEm,terminaEm,local,online,categoria,vagas,imagemUrl,cancelado,situacaoTemporal,vagasDisponiveis,inscricaoPermitida}. Retorna 404 se inexistente.",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ evento_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna o evento\", () => insomnia.expect(insomnia.response.json().id).to.equal(\"{{ evento_id }}\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99967,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_catalog_get",
+      "parentId": "req_catalog_get",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\",\n  \"vagasDisponiveis\": 79,\n  \"inscricaoPermitida\": true\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99966,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_50_registrations",
+      "parentId": "wrk_event_manager_pos",
+      "name": "50 - Inscricoes do participante",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ participant_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99965,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_registrations_create",
+      "parentId": "fld_50_registrations",
+      "name": "Criar inscricao",
+      "description": "Somente PARTICIPANTE. eventoId obrigatorio. Resposta 201 quando cria nova inscricao; 200 quando devolve inscricao ATIVA existente ou reativa uma cancelada. Retorna 404 se o evento nao existir e 409 se cancelado, finalizado ou sem vagas.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"eventoId\": \"{{ evento_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201 ou 200\", () => {\n  insomnia.expect(insomnia.response.code).to.be.oneOf([201, 200]);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.situacao).to.equal(\"ATIVA\");\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"inscricao_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99964,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_registrations_create",
+      "parentId": "req_registrations_create",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"ATIVA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": null,\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99963,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_registrations_list",
+      "parentId": "fld_50_registrations",
+      "name": "Listar minhas inscricoes",
+      "description": "Somente PARTICIPANTE. Lista inscricoes do subject do JWT por inscritoEm decrescente, cada uma com o evento aninhado. Nao ha paginacao ou filtros.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna uma colecao\", () => insomnia.expect(insomnia.response.json()).to.be.an(\"array\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99962,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_registrations_list",
+      "parentId": "req_registrations_list",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"inscricao-1\",\n    \"eventoId\": \"evento-1\",\n    \"participanteId\": \"participante-1\",\n    \"situacao\": \"ATIVA\",\n    \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n    \"canceladoEm\": null,\n    \"evento\": {\n      \"id\": \"evento-1\",\n      \"titulo\": \"Backend Day\",\n      \"descricao\": \"Palestras sobre Java e Spring.\",\n      \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n      \"terminaEm\": \"2030-07-12T18:00:00Z\",\n      \"local\": \"Auditorio 1\",\n      \"online\": false,\n      \"categoria\": \"Tecnologia\",\n      \"vagas\": 80,\n      \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n      \"cancelado\": false,\n      \"situacaoTemporal\": \"FUTURO\",\n      \"vagasDisponiveis\": 79,\n      \"inscricaoPermitida\": true\n    }\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99961,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_registrations_cancel",
+      "parentId": "fld_50_registrations",
+      "name": "Cancelar inscricao",
+      "description": "Somente PARTICIPANTE e dono da inscricao. Idempotente para inscricao ja CANCELADA. Retorna 200 InscricaoResponse; 404 para ID ausente/de outro participante; 409 se o evento foi cancelado ou terminou.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Inscricao cancelada\", () => insomnia.expect(insomnia.response.json().situacao).to.equal(\"CANCELADA\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99960,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_registrations_cancel",
+      "parentId": "req_registrations_cancel",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"CANCELADA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": \"2030-07-11T16:00:00Z\",\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99959,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_registrations_reactivate",
+      "parentId": "fld_50_registrations",
+      "name": "Reativar inscricao",
+      "description": "Somente PARTICIPANTE e dono da inscricao. Idempotente para inscricao ja ATIVA. Retorna 200 InscricaoResponse; 404 para ID ausente/de outro participante; 409 se evento cancelado/finalizado ou sem vagas.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}/reativar",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Inscricao ativa\", () => insomnia.expect(insomnia.response.json().situacao).to.equal(\"ATIVA\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99958,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_registrations_reactivate",
+      "parentId": "req_registrations_reactivate",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}/reativar",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"ATIVA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": null,\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99957,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_60_attendees",
+      "parentId": "wrk_event_manager_pos",
+      "name": "60 - Inscritos do evento",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99956,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_attendees_list",
+      "parentId": "fld_60_attendees",
+      "name": "Listar inscritos do evento",
+      "description": "Somente ORGANIZADOR e dono do evento. Retorna array de {id,eventoId,participanteId,situacao,inscritoEm,canceladoEm,participante:{id,nome,email}}, incluindo inscricoes ativas e canceladas. Retorna 404 para evento inexistente/de outro organizador.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}/inscricoes",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Retorna uma colecao\", () => insomnia.expect(insomnia.response.json()).to.be.an(\"array\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99955,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_attendees_list",
+      "parentId": "req_attendees_list",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}/inscricoes",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"inscricao-1\",\n    \"eventoId\": \"evento-1\",\n    \"participanteId\": \"participante-1\",\n    \"situacao\": \"ATIVA\",\n    \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n    \"canceladoEm\": null,\n    \"participante\": {\n      \"id\": \"participante-1\",\n      \"nome\": \"Participante Exemplo\",\n      \"email\": \"participante@exemplo.com\"\n    }\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99954,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_90_flows",
+      "parentId": "wrk_event_manager_pos",
+      "name": "90 - Fluxos",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {},
+      "headers": [],
+      "metaSortKey": -99953,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_90_flow_organizer",
+      "parentId": "fld_90_flows",
+      "name": "91 - Organizador: login e ciclo do evento",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99952,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_login",
+      "parentId": "fld_90_flow_organizer",
+      "name": "01 - Login como organizador",
+      "description": "Execute primeiro. Salva organizer_access_token.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ organizer_email }}\",\n  \"senha\": \"{{ organizer_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem token e usuario\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.tokenAcesso).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.tipoToken).to.equal(\"Bearer\");\n  insomnia.expect(body.usuario?.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.tokenAcesso) throw new Error(\"tokenAcesso nao encontrado na resposta de login.\");\ninsomnia.environment.set(\"access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"user_id\", body.usuario.id);\ninsomnia.environment.set(\"organizer_access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"organizer_id\", body.usuario.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99951,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_login",
+      "parentId": "req_flow_org_login",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"tokenAcesso\": \"TOKEN_JWT_EXEMPLO\",\n  \"tipoToken\": \"Bearer\",\n  \"expiraEm\": \"2030-07-11T16:00:00Z\",\n  \"usuario\": {\n    \"id\": \"usuario-1\",\n    \"nome\": \"Usuario Exemplo\",\n    \"email\": \"usuario@exemplo.com\",\n    \"perfil\": \"ORGANIZADOR\"\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99950,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_create_event",
+      "parentId": "fld_90_flow_organizer",
+      "name": "02 - Criar evento",
+      "description": "Salva evento_id para as proximas etapas.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"{{ imagem_url }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(201);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"evento_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99949,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_create_event",
+      "parentId": "req_flow_org_create_event",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99948,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_list_events",
+      "parentId": "fld_90_flow_organizer",
+      "name": "03 - Listar meus eventos",
+      "description": "Confirma o evento criado.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99947,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_list_events",
+      "parentId": "req_flow_org_list_events",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"evento-1\",\n    \"organizadorId\": \"organizador-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\"\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99946,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_update_event",
+      "parentId": "fld_90_flow_organizer",
+      "name": "04 - Atualizar evento",
+      "description": "Atualiza o evento capturado.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "method": "PUT",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Backend Day - Fluxo atualizado\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"{{ imagem_url }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99945,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_update_event",
+      "parentId": "req_flow_org_update_event",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99944,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_attendees",
+      "parentId": "fld_90_flow_organizer",
+      "name": "05 - Listar inscritos",
+      "description": "Lista inscritos do evento capturado.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}/inscricoes",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99943,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_attendees",
+      "parentId": "req_flow_org_attendees",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}/inscricoes",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"inscricao-1\",\n    \"eventoId\": \"evento-1\",\n    \"participanteId\": \"participante-1\",\n    \"situacao\": \"ATIVA\",\n    \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n    \"canceladoEm\": null,\n    \"participante\": {\n      \"id\": \"participante-1\",\n      \"nome\": \"Participante Exemplo\",\n      \"email\": \"participante@exemplo.com\"\n    }\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99942,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_org_cancel_event",
+      "parentId": "fld_90_flow_organizer",
+      "name": "06 - Cancelar evento",
+      "description": "Cancela logicamente o evento.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99941,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_org_cancel_event",
+      "parentId": "req_flow_org_cancel_event",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"organizadorId\": \"organizador-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": true,\n  \"situacaoTemporal\": \"FUTURO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99940,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_90_flow_participant",
+      "parentId": "fld_90_flows",
+      "name": "92 - Participante: login e ciclo da inscricao",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ participant_access_token }}",
+        "prefix": "Bearer"
+      },
+      "headers": [],
+      "metaSortKey": -99939,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_login",
+      "parentId": "fld_90_flow_participant",
+      "name": "01 - Login como participante",
+      "description": "Execute primeiro. Salva participant_access_token.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ participant_email }}\",\n  \"senha\": \"{{ participant_password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem token e usuario\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.tokenAcesso).to.be.a(\"string\").and.not.empty;\n  insomnia.expect(body.tipoToken).to.equal(\"Bearer\");\n  insomnia.expect(body.usuario?.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.tokenAcesso) throw new Error(\"tokenAcesso nao encontrado na resposta de login.\");\ninsomnia.environment.set(\"access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"user_id\", body.usuario.id);\ninsomnia.environment.set(\"participant_access_token\", body.tokenAcesso);\ninsomnia.environment.set(\"participant_id\", body.usuario.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99938,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_login",
+      "parentId": "req_flow_part_login",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"tokenAcesso\": \"TOKEN_JWT_EXEMPLO\",\n  \"tipoToken\": \"Bearer\",\n  \"expiraEm\": \"2030-07-11T16:00:00Z\",\n  \"usuario\": {\n    \"id\": \"usuario-1\",\n    \"nome\": \"Usuario Exemplo\",\n    \"email\": \"usuario@exemplo.com\",\n    \"perfil\": \"PARTICIPANTE\"\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99937,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_catalog",
+      "parentId": "fld_90_flow_participant",
+      "name": "02 - Buscar evento no catalogo",
+      "description": "Exige evento_id de um evento nao cancelado/finalizado e com vagas.",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ evento_id }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99936,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_catalog",
+      "parentId": "req_flow_part_catalog",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ evento_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"evento-1\",\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n  \"terminaEm\": \"2030-07-12T18:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n  \"cancelado\": false,\n  \"situacaoTemporal\": \"FUTURO\",\n  \"vagasDisponiveis\": 79,\n  \"inscricaoPermitida\": true\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99935,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_create_registration",
+      "parentId": "fld_90_flow_participant",
+      "name": "03 - Criar inscricao",
+      "description": "Salva inscricao_id.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"eventoId\": \"{{ evento_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 201\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(201);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Resposta contem id\", () => {\n  const body = insomnia.response.json();\n  insomnia.expect(body.id).to.be.a(\"string\").and.not.empty;\n});\nconst body = insomnia.response.json();\nif (!body.id) throw new Error(\"id nao encontrado na resposta.\");\ninsomnia.environment.set(\"inscricao_id\", body.id);",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99934,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_create_registration",
+      "parentId": "req_flow_part_create_registration",
+      "name": "201 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "statusCode": 201,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"ATIVA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": null,\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99933,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_list_registrations",
+      "parentId": "fld_90_flow_participant",
+      "name": "04 - Listar minhas inscricoes",
+      "description": "Confirma a inscricao.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99932,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_list_registrations",
+      "parentId": "req_flow_part_list_registrations",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "[\n  {\n    \"id\": \"inscricao-1\",\n    \"eventoId\": \"evento-1\",\n    \"participanteId\": \"participante-1\",\n    \"situacao\": \"ATIVA\",\n    \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n    \"canceladoEm\": null,\n    \"evento\": {\n      \"id\": \"evento-1\",\n      \"titulo\": \"Backend Day\",\n      \"descricao\": \"Palestras sobre Java e Spring.\",\n      \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n      \"terminaEm\": \"2030-07-12T18:00:00Z\",\n      \"local\": \"Auditorio 1\",\n      \"online\": false,\n      \"categoria\": \"Tecnologia\",\n      \"vagas\": 80,\n      \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n      \"cancelado\": false,\n      \"situacaoTemporal\": \"FUTURO\",\n      \"vagasDisponiveis\": 79,\n      \"inscricaoPermitida\": true\n    }\n  }\n]",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99931,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_cancel_registration",
+      "parentId": "fld_90_flow_participant",
+      "name": "05 - Cancelar inscricao",
+      "description": "Altera situacao para CANCELADA.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99930,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_cancel_registration",
+      "parentId": "req_flow_part_cancel_registration",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"CANCELADA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": \"2030-07-11T16:00:00Z\",\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99929,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_flow_part_reactivate_registration",
+      "parentId": "fld_90_flow_participant",
+      "name": "06 - Reativar inscricao",
+      "description": "Altera situacao para ATIVA se ainda permitido.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}/reativar",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 200\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(200);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99928,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_flow_part_reactivate_registration",
+      "parentId": "req_flow_part_reactivate_registration",
+      "name": "200 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes/{{ inscricao_id }}/reativar",
+      "statusCode": 200,
+      "contentType": "application/json",
+      "body": "{\n  \"id\": \"inscricao-1\",\n  \"eventoId\": \"evento-1\",\n  \"participanteId\": \"participante-1\",\n  \"situacao\": \"ATIVA\",\n  \"inscritoEm\": \"2030-07-11T15:00:00Z\",\n  \"canceladoEm\": null,\n  \"evento\": {\n    \"id\": \"evento-1\",\n    \"titulo\": \"Backend Day\",\n    \"descricao\": \"Palestras sobre Java e Spring.\",\n    \"iniciaEm\": \"2030-07-12T15:00:00Z\",\n    \"terminaEm\": \"2030-07-12T18:00:00Z\",\n    \"local\": \"Auditorio 1\",\n    \"online\": false,\n    \"categoria\": \"Tecnologia\",\n    \"vagas\": 80,\n    \"imagemUrl\": \"https://exemplo.invalid/evento.png\",\n    \"cancelado\": false,\n    \"situacaoTemporal\": \"FUTURO\",\n    \"vagasDisponiveis\": 79,\n    \"inscricaoPermitida\": true\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "metaSortKey": -99927,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "fld_99_errors",
+      "parentId": "wrk_event_manager_pos",
+      "name": "99 - Casos de Erro",
+      "description": "",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "authentication": {},
+      "headers": [],
+      "metaSortKey": -99926,
+      "_type": "request_group"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_no_auth",
+      "parentId": "fld_99_errors",
+      "name": "Listar eventos - sem autenticacao",
+      "description": "Sem Authorization. Esperado ProblemDetail com codigo NAO_AUTENTICADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 401\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(401);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"NAO_AUTENTICADO\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99925,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_no_auth",
+      "parentId": "req_error_no_auth",
+      "name": "401 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 401,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/nao_autenticado\",\n  \"title\": \"Não autenticado\",\n  \"status\": 401,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/eventos\",\n  \"codigo\": \"NAO_AUTENTICADO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99924,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_invalid_token",
+      "parentId": "fld_99_errors",
+      "name": "Usuario autenticado - token invalido",
+      "description": "Bearer deliberadamente invalido. Esperado NAO_AUTENTICADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/usuarios/atual",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "token-invalido",
+        "prefix": "Bearer"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 401\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(401);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"NAO_AUTENTICADO\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99923,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_invalid_token",
+      "parentId": "req_error_invalid_token",
+      "name": "401 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/usuarios/atual",
+      "statusCode": 401,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/nao_autenticado\",\n  \"title\": \"Não autenticado\",\n  \"status\": 401,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/usuarios/atual\",\n  \"codigo\": \"NAO_AUTENTICADO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99922,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_invalid_payload",
+      "parentId": "fld_99_errors",
+      "name": "Cadastrar participante - payload invalido",
+      "description": "Esperado ProblemDetail DADOS_INVALIDOS com erros de nome, email e senha.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/cadastro",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"\",\n  \"email\": \"invalido\",\n  \"senha\": \"curta\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 400\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(400);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erros por campo\", () => { const b = insomnia.response.json(); insomnia.expect(b.codigo).to.equal(\"DADOS_INVALIDOS\"); insomnia.expect(b.erros).to.include.all.keys(\"nome\", \"email\", \"senha\"); });",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99921,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_invalid_payload",
+      "parentId": "req_error_invalid_payload",
+      "name": "400 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/cadastro",
+      "statusCode": 400,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/dados_invalidos\",\n  \"title\": \"Dados inválidos\",\n  \"status\": 400,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/autenticacao/cadastro\",\n  \"codigo\": \"DADOS_INVALIDOS\",\n  \"erros\": {\n    \"nome\": \"é obrigatório\",\n    \"email\": \"deve ser um e-mail válido\",\n    \"senha\": \"deve ter entre 8 caracteres e 72 bytes em UTF-8\"\n  }\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99920,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_invalid_login",
+      "parentId": "fld_99_errors",
+      "name": "Login - credenciais invalidas",
+      "description": "Esperado CREDENCIAIS_INVALIDAS sem revelar se o email existe.",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ participant_email }}\",\n  \"senha\": \"SENHA_INCORRETA\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "none"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 401\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(401);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"CREDENCIAIS_INVALIDAS\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99919,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_invalid_login",
+      "parentId": "req_error_invalid_login",
+      "name": "401 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/autenticacao/login",
+      "statusCode": 401,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/credenciais_invalidas\",\n  \"title\": \"Credenciais inválidas\",\n  \"status\": 401,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/autenticacao/login\",\n  \"codigo\": \"CREDENCIAIS_INVALIDAS\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99918,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_event_period",
+      "parentId": "fld_99_errors",
+      "name": "Criar evento - periodo invalido",
+      "description": "Termino anterior ao inicio. Esperado PERIODO_EVENTO_INVALIDO.",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"titulo\": \"Backend Day\",\n  \"descricao\": \"Palestras sobre Java e Spring.\",\n  \"iniciaEm\": \"2030-07-12T18:00:00Z\",\n  \"terminaEm\": \"2030-07-12T15:00:00Z\",\n  \"local\": \"Auditorio 1\",\n  \"online\": false,\n  \"categoria\": \"Tecnologia\",\n  \"vagas\": 80,\n  \"imagemUrl\": \"{{ imagem_url }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 400\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(400);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"PERIODO_EVENTO_INVALIDO\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99917,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_event_period",
+      "parentId": "req_error_event_period",
+      "name": "400 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/eventos",
+      "statusCode": 400,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/periodo_evento_invalido\",\n  \"title\": \"Período do evento inválido\",\n  \"status\": 400,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/eventos\",\n  \"codigo\": \"PERIODO_EVENTO_INVALIDO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99916,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_not_found",
+      "parentId": "fld_99_errors",
+      "name": "Buscar evento - ID inexistente",
+      "description": "Esperado RECURSO_NAO_ENCONTRADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ id_inexistente }}",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ participant_access_token }}",
+        "prefix": "Bearer"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 404\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(404);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"RECURSO_NAO_ENCONTRADO\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99915,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_not_found",
+      "parentId": "req_error_not_found",
+      "name": "404 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos/{{ id_inexistente }}",
+      "statusCode": 404,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/recurso_nao_encontrado\",\n  \"title\": \"Recurso não encontrado\",\n  \"status\": 404,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/catalogo/eventos/{{ id_inexistente }}\",\n  \"codigo\": \"RECURSO_NAO_ENCONTRADO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99914,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_forbidden",
+      "parentId": "fld_99_errors",
+      "name": "Listar catalogo - perfil sem permissao",
+      "description": "Usa token de ORGANIZADOR em rota de PARTICIPANTE. Esperado ACESSO_NEGADO.",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ organizer_access_token }}",
+        "prefix": "Bearer"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 403\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(403);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"ACESSO_NEGADO\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99913,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_forbidden",
+      "parentId": "req_error_forbidden",
+      "name": "403 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/catalogo/eventos",
+      "statusCode": 403,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/acesso_negado\",\n  \"title\": \"Acesso negado\",\n  \"status\": 403,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/catalogo/eventos\",\n  \"codigo\": \"ACESSO_NEGADO\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99912,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "req_error_registration_conflict",
+      "parentId": "fld_99_errors",
+      "name": "Criar inscricao - regra de negocio",
+      "description": "Use evento cancelado, finalizado ou sem vagas. Esperado INSCRICAO_NAO_PERMITIDA.",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"eventoId\": \"{{ evento_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ participant_access_token }}",
+        "prefix": "Bearer"
+      },
+      "preRequestScript": "",
+      "afterResponseScript": "insomnia.test(\"Retorna HTTP 409\", () => {\n  insomnia.expect(insomnia.response.code).to.equal(409);\n});\ninsomnia.test(\"Retorna JSON\", () => {\n  const contentType = insomnia.response.headers.find(h => (h.key ?? h.name ?? \"\").toLowerCase() === \"content-type\")?.value;\n  insomnia.expect(contentType).to.include(\"json\");\n});\ninsomnia.test(\"Erro padronizado\", () => insomnia.expect(insomnia.response.json().codigo).to.equal(\"INSCRICAO_NAO_PERMITIDA\"));",
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "metaSortKey": -99911,
+      "isPrivate": false,
+      "_type": "request"
+    },
+    {
+      "created": 1783785600000,
+      "modified": 1783785600000,
+      "_id": "res_error_registration_conflict",
+      "parentId": "req_error_registration_conflict",
+      "name": "409 - Exemplo",
+      "url": "{{ base_url }}{{ api_prefix }}/inscricoes",
+      "statusCode": 409,
+      "contentType": "application/problem+json",
+      "body": "{\n  \"type\": \"https://event-manager.local/problemas/inscricao_nao_permitida\",\n  \"title\": \"Inscrição não permitida\",\n  \"status\": 409,\n  \"detail\": \"Exemplo de erro retornado pela API.\",\n  \"instance\": \"/inscricoes\",\n  \"codigo\": \"INSCRICAO_NAO_PERMITIDA\"\n}",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/problem+json"
+        }
+      ],
+      "metaSortKey": -99910,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "_type": "response"
+    }
+  ]
+}

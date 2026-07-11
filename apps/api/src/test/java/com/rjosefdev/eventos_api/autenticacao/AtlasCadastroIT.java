@@ -15,7 +15,7 @@ import com.rjosefdev.eventos_api.usuarios.Perfil;
 import com.rjosefdev.eventos_api.usuarios.Usuario;
 import com.rjosefdev.eventos_api.usuarios.UsuarioRepository;
 
-@SpringBootTest
+@SpringBootTest(properties = "app.security.jwt.secret=12345678901234567890123456789012")
 class AtlasCadastroIT {
 
     @Autowired private CadastroParticipanteService service;

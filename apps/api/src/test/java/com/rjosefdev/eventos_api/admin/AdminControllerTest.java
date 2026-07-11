@@ -1,6 +1,7 @@
 package com.rjosefdev.eventos_api.admin;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -17,15 +18,18 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.rjosefdev.eventos_api.config.ApiExceptionHandler;
+import com.rjosefdev.eventos_api.config.ErroSegurancaHandler;
 import com.rjosefdev.eventos_api.config.SegurancaConfig;
 import com.rjosefdev.eventos_api.usuarios.Perfil;
 
 @WebMvcTest(AdminController.class)
-@Import({ SegurancaConfig.class, ApiExceptionHandler.class })
+@Import({ SegurancaConfig.class, ApiExceptionHandler.class, ErroSegurancaHandler.class })
+@TestPropertySource(properties = "app.security.jwt.secret=12345678901234567890123456789012")
 class AdminControllerTest {
 
     private static final Instant AGORA = Instant.parse("2026-07-11T15:00:00Z");
@@ -37,7 +41,7 @@ class AdminControllerTest {
     private AdminService service;
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ORGANIZADOR")
     void cadastraOrganizadorRetornandoDadosPublicos() throws Exception {
         when(service.cadastrarOrganizador(any())).thenReturn(
             new UsuarioAdminResponse(
@@ -69,7 +73,7 @@ class AdminControllerTest {
     }
 
     @Test
-    @WithMockUser
+    @WithMockUser(roles = "ORGANIZADOR")
     void listaTodosOsUsuariosSemDadosDeSenha() throws Exception {
         when(service.listarUsuarios()).thenReturn(List.of(
             new UsuarioAdminResponse(
@@ -93,6 +97,18 @@ class AdminControllerTest {
     @Test
     void endpointsAdminExigemAutenticacao() throws Exception {
         mockMvc.perform(get("/admin/usuarios"))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.codigo").value("NAO_AUTENTICADO"));
+    }
+
+    @Test
+    @WithMockUser(roles = "PARTICIPANTE")
+    void perfilIncompativelRetornaAcessoNegado() throws Exception {
+        mockMvc.perform(get("/admin/usuarios"))
+            .andExpect(status().isForbidden())
+            .andExpect(jsonPath("$.title").value("Acesso negado"))
+            .andExpect(jsonPath("$.codigo").value("ACESSO_NEGADO"));
+
+        verifyNoInteractions(service);
     }
 }
