@@ -36,7 +36,7 @@ public class CatalogoService {
 
     public List<CatalogoEventoResponse> listar(CatalogoFiltro filtro) {
         Instant agora = clock.instant();
-        Comparator<Evento> ordenacao = Comparator.comparing(Evento::getIniciaEm);
+        Comparator<Evento> ordenacao = Comparator.comparing(evento -> evento.getIniciaEm());
         if (filtro.ordemDecrescente()) {
             ordenacao = ordenacao.reversed();
         }
