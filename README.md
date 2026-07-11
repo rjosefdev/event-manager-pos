@@ -85,9 +85,7 @@ Execute os testes da API:
 pnpm --dir apps/api test
 ```
 
-## Status atual
+## Teste API
 
-O produto segue em desenvolvimento, mas já possui API e web app integrados para
-cadastro/login, área de participante, área de organizador, eventos, catálogo,
-inscrições e lista de inscritos. A collection do Insomnia em
+A collection do Insomnia em
 `docs/insomnia/insomnia-collection.json` documenta o contrato HTTP atual da API.
