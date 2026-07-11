@@ -188,12 +188,6 @@ export function AreaOrganizador({ sessao, onSair }: { sessao: Sessao; onSair: ()
         {erroEvento && <p className="mensagem erro-geral" role="alert">{erroEvento}</p>}
         {sucessoEvento && <p className="mensagem sucesso" role="status">{sucessoEvento}</p>}
 
-        <BarraFiltrosEventos
-          filtros={filtros}
-          categorias={categoriasEventos(eventos)}
-          total={eventosFiltrados.length}
-          onChange={setFiltros}
-        />
 
         {carregandoEventos ? (
           <p className="estado-lista" role="status">Carregando eventos...</p>
