@@ -27,12 +27,12 @@ ele.
 ## Funcionalidades previstas
 
 - Autenticação e autorização por perfil.
-- CRUD de eventos para organizadores.
+- CRUD/cancelamento lógico de eventos para organizadores.
 - Listagem de eventos com status: futuro, ocorrendo e finalizado.
 - Catálogo de eventos para participantes.
 - Busca por texto, filtro por categoria e ordenação por data.
 - Inscrição em eventos respeitando o limite de vagas.
-- Cancelamento de inscrição antes da data do evento.
+- Cancelamento e reativação de inscrição.
 - Área de "Minhas Inscrições" para participantes.
 - Lista de inscritos por evento para organizadores.
 
@@ -60,6 +60,9 @@ Execute front-end e back-end em modo desenvolvimento:
 pnpm dev
 ```
 
+Por padrão, o front-end sobe em `http://localhost:3000` e espera a API em
+`http://localhost:8080`.
+
 Execute apenas o front-end:
 
 ```bash
@@ -72,6 +75,10 @@ Execute apenas a API:
 pnpm dev:api
 ```
 
+A API usa a porta padrão do Spring Boot (`8080`) quando `server.port` não é
+sobrescrito. O front-end usa `NEXT_PUBLIC_API_URL` quando definida e cai para
+`http://localhost:8080` quando a variável não existe.
+
 Execute os testes da API:
 
 ```bash
@@ -80,7 +87,7 @@ pnpm --dir apps/api test
 
 ## Status atual
 
-O repositório está em fase inicial. A API foi criada a partir do Spring
-Initializer e a aplicação web foi criada com Next.js. A modelagem de domínio,
-endpoints, autenticação, telas e integração com MongoDB ainda serão
-implementadas.
+O produto segue em desenvolvimento, mas já possui API e web app integrados para
+cadastro/login, área de participante, área de organizador, eventos, catálogo,
+inscrições e lista de inscritos. A collection do Insomnia em
+`docs/insomnia/insomnia-collection.json` documenta o contrato HTTP atual da API.
