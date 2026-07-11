@@ -557,6 +557,7 @@ function AreaParticipante({ sessao }: { sessao: Sessao }) {
           <ul className="catalogo-lista">
             {eventos.map((evento) => (
               <li key={evento.id} className={eventoSelecionado?.id === evento.id ? "selecionado" : undefined}>
+                <EventoImagem evento={evento} />
                 <div>
                   <strong>{evento.titulo}</strong>
                   <span>{evento.categoria}</span>
@@ -587,6 +588,7 @@ function AreaParticipante({ sessao }: { sessao: Sessao }) {
 
           {eventoSelecionado && (
             <article className="detalhes-catalogo" aria-label="Detalhes do evento">
+              <EventoImagem evento={eventoSelecionado} destaque />
               <span className={`situacao ${classeSituacao(eventoSelecionado)}`}>
                 {rotuloSituacaoCatalogo(eventoSelecionado)}
               </span>
@@ -640,6 +642,7 @@ function AreaParticipante({ sessao }: { sessao: Sessao }) {
           <ul>
             {inscricoes.map((inscricao) => (
               <li key={inscricao.id}>
+                <EventoImagem evento={inscricao.evento} />
                 <div>
                   <strong>{inscricao.evento.titulo}</strong>
                   <span>{inscricao.evento.categoria}</span>
@@ -990,6 +993,7 @@ function AreaOrganizador({ sessao }: { sessao: Sessao }) {
           <ul>
             {eventos.map((evento) => (
               <li key={evento.id}>
+                <EventoImagem evento={evento} />
                 <div>
                   <strong>{evento.titulo}</strong>
                   <span>{evento.categoria}</span>
@@ -1136,6 +1140,45 @@ function sincronizarEventosComInscricoes(eventos: EventoCatalogo[], inscricoes: 
     const inscricao = inscricoes.find((item) => item.eventoId === evento.id);
     return inscricao?.evento ?? evento;
   });
+}
+
+function EventoImagem({
+  evento,
+  destaque = false,
+}: {
+  evento: Pick<Evento, "titulo" | "imagemUrl">;
+  destaque?: boolean;
+}) {
+  const imagem = resolverImagemEvento(evento.imagemUrl);
+  const inicial = evento.titulo.trim().charAt(0).toUpperCase() || "E";
+
+  return (
+    <div className={destaque ? "evento-imagem destaque" : "evento-imagem"} aria-hidden={!imagem}>
+      {imagem && (
+        /* eslint-disable-next-line @next/next/no-img-element -- Imagens de eventos podem vir da API ou de URLs externas cadastradas. */
+        <img
+          src={imagem}
+          alt={`Imagem de ${evento.titulo}`}
+          loading="lazy"
+          onError={(event) => {
+            event.currentTarget.hidden = true;
+          }}
+        />
+      )}
+      <span aria-hidden="true">{inicial}</span>
+    </div>
+  );
+}
+
+function resolverImagemEvento(imagemUrl?: string | null) {
+  const imagem = imagemUrl?.trim();
+  if (!imagem) {
+    return null;
+  }
+  if (imagem.startsWith("/")) {
+    return `${API_URL.replace(/\/$/, "")}${imagem}`;
+  }
+  return imagem;
 }
 
 function formatarDataHora(valor: string) {

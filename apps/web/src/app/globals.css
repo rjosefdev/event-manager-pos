@@ -510,6 +510,47 @@ button:disabled { cursor: wait; opacity: .65; }
   font-size: .86rem;
 }
 
+.evento-imagem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 1px solid rgba(23, 107, 81, .12);
+  border-radius: 8px;
+  background: #edf1ef;
+}
+
+.evento-imagem.destaque {
+  aspect-ratio: 4 / 3;
+}
+
+.evento-imagem img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.evento-imagem span {
+  position: relative;
+  display: grid !important;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 !important;
+  border-radius: 999px;
+  color: var(--green) !important;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(31, 51, 42, .1);
+  font-size: 1.1rem !important;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .situacao {
   position: absolute;
   top: 1rem;
